@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mobile-data-mirror
+    runtime: python
+    plan: free
+    buildCommand: "python --version"
+    startCommand: "python server.py"
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
