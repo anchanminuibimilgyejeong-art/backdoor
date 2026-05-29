@@ -9,6 +9,7 @@ import time
 
 
 PORT = int(os.environ.get("PORT", "8080"))
+MIRROR_PASSWORD = os.environ.get("MIRROR_PASSWORD", "").strip()
 MAX_FRAME_BYTES = 10 * 1024 * 1024
 rooms = {}
 rooms_lock = threading.Lock()
@@ -529,6 +530,8 @@ def request_password(query, headers):
 def set_or_check_room_password(room_name, password):
     if not password:
         return False
+    if MIRROR_PASSWORD:
+        return hmac.compare_digest(MIRROR_PASSWORD, password)
     room = get_room(room_name)
     with room.lock:
         if room.password is None:
@@ -540,6 +543,8 @@ def set_or_check_room_password(room_name, password):
 def check_room_password(room_name, password):
     if not password:
         return False
+    if MIRROR_PASSWORD:
+        return hmac.compare_digest(MIRROR_PASSWORD, password)
     room = get_room(room_name)
     with room.lock:
         if room.password is None:
